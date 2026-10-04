@@ -21,6 +21,7 @@ import { openPagedJsPdfWindow, generatePagedJsPdf } from '../utils/pagedjsPdf';
 import {
   Printer,
   FileDown,
+  FileText,
   Loader2,
   CheckCircle2,
   ZoomIn,
@@ -81,6 +82,7 @@ const LineSpacingIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-
 interface A4FitWidthViewerProps {
   data: TelaahanStafData;
   onPrint: () => void;
+  onOpenGoogleDocs?: () => void;
   onBackToEditor?: () => void;
   onGoToLauncher?: () => void;
   onMeasurementsUpdate?: (measurements: Record<string, number>) => void;
@@ -88,9 +90,10 @@ interface A4FitWidthViewerProps {
   onPaperSizeChange?: (size: 'a4' | 'f4') => void;
 }
 
-export const A4FitWidthViewer: React.FC<A4FitWidthViewerProps> = ({
+export const A4FitWidthViewer: React.FC<A4FitWidthViewerProps> = React.memo(({
   data,
   onPrint,
+  onOpenGoogleDocs,
   onBackToEditor,
   onGoToLauncher,
   onMeasurementsUpdate,
@@ -266,27 +269,35 @@ export const A4FitWidthViewer: React.FC<A4FitWidthViewerProps> = ({
     const timer = setTimeout(updateDocHeight, 150);
 
     let observer: ResizeObserver | null = null;
+    let rafId: number | null = null;
+
     if (documentRef.current) {
       observer = new ResizeObserver(() => {
-        updateDocHeight();
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          updateDocHeight();
+        });
       });
       observer.observe(documentRef.current);
     }
 
     return () => {
       clearTimeout(timer);
+      if (rafId) cancelAnimationFrame(rafId);
       if (observer) observer.disconnect();
     };
   }, [paperSize, margins, fontSizePt, lineSpacing, fontFamily, pageSplitMode, data]);
 
   // Measure container and compute ideal "Fit" ratio
   useEffect(() => {
+    let resizeRafId: number | null = null;
+
     const updateDimensions = () => {
       if (containerRef.current) {
         const padding = window.innerWidth < 640 ? 16 : 32;
         const availableWidth = containerRef.current.clientWidth - padding;
         const calculatedFit = Math.max(0.3, Math.min(1.0, availableWidth / baseWidth));
-        setFitScale(calculatedFit);
+        setFitScale((prev) => (Math.abs(prev - calculatedFit) > 0.01 ? calculatedFit : prev));
 
         if (!hasInitialCentered) {
           const actualZoom = window.innerWidth < 768 ? calculatedFit : 1.0;
@@ -296,20 +307,24 @@ export const A4FitWidthViewer: React.FC<A4FitWidthViewerProps> = ({
       }
     };
 
+    const throttledUpdate = () => {
+      if (resizeRafId) cancelAnimationFrame(resizeRafId);
+      resizeRafId = requestAnimationFrame(updateDimensions);
+    };
+
     updateDimensions();
 
-    const resizeObserver = new ResizeObserver(() => {
-      updateDimensions();
-    });
+    const resizeObserver = new ResizeObserver(throttledUpdate);
 
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
     }
 
-    window.addEventListener('resize', updateDimensions);
+    window.addEventListener('resize', throttledUpdate);
     return () => {
+      if (resizeRafId) cancelAnimationFrame(resizeRafId);
       resizeObserver.disconnect();
-      window.removeEventListener('resize', updateDimensions);
+      window.removeEventListener('resize', throttledUpdate);
     };
   }, [fontFamily, fontSizePt, lineSpacing, paperSize, baseWidth, basePageHeight, showFormatPanel, hasInitialCentered]);
 
@@ -450,6 +465,19 @@ export const A4FitWidthViewer: React.FC<A4FitWidthViewerProps> = ({
 
         {/* Right: Quick Tools & Cetak */}
         <div className="flex items-center gap-1.5">
+          {onOpenGoogleDocs && (
+            <button
+              type="button"
+              onClick={onOpenGoogleDocs}
+              className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-full text-xs font-bold transition cursor-pointer shrink-0 shadow-md shadow-blue-500/20"
+              title="Cetak & Embed via Google Docs"
+            >
+              <FileText className="w-3.5 h-3.5 text-blue-100" />
+              <span className="hidden sm:inline">Google Docs</span>
+              <span className="sm:hidden">Docs</span>
+            </button>
+          )}
+
           <button
             type="button"
             onClick={handleShareWhatsApp}
@@ -462,12 +490,18 @@ export const A4FitWidthViewer: React.FC<A4FitWidthViewerProps> = ({
 
           <button
             type="button"
-            onClick={() => openPagedJsPdfWindow(data, { paperSize, margins, fontSizePt, lineSpacing, fontFamily, pageSplitMode })}
-            className="inline-flex items-center gap-1 px-3.5 py-1.5 bg-gradient-to-r from-[#7F56D9] to-[#4F46E5] hover:opacity-95 active:scale-95 text-white rounded-full text-xs font-extrabold transition cursor-pointer shrink-0 shadow-md shadow-purple-500/25"
-            title={`Cetak Lembar (${paperConfig.shortName})`}
+            onClick={() => {
+              if (onOpenGoogleDocs) {
+                onOpenGoogleDocs();
+              } else {
+                onPrint();
+              }
+            }}
+            className="inline-flex items-center gap-1 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-full text-xs font-extrabold transition cursor-pointer shrink-0 shadow-md shadow-blue-500/25"
+            title={`Cetak via Google Docs (${paperConfig.shortName})`}
           >
-            <Printer className="w-3.5 h-3.5" />
-            <span>Cetak</span>
+            <Printer className="w-3.5 h-3.5 text-blue-100" />
+            <span>Cetak Google Docs</span>
           </button>
         </div>
       </div>
@@ -1561,4 +1595,4 @@ export const A4FitWidthViewer: React.FC<A4FitWidthViewerProps> = ({
       />
     </div>
   );
-};
+});

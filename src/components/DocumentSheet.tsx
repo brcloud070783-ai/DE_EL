@@ -28,7 +28,7 @@ interface DocumentSheetProps {
   onMeasurementsUpdate?: (measurements: Record<string, number>) => void;
 }
 
-export const DocumentSheet: React.FC<DocumentSheetProps> = ({
+export const DocumentSheet: React.FC<DocumentSheetProps> = React.memo(({
   data,
   paperSize = 'a4',
   margins = DEFAULT_DOCUMENT_MARGINS,
@@ -573,4 +573,4 @@ export const DocumentSheet: React.FC<DocumentSheetProps> = ({
         })}
       </div>
   );
-};
+});

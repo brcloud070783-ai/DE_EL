@@ -32,6 +32,7 @@ interface BentoLauncherProps {
   data: TelaahanStafData;
   setActiveTab: (tab: ActiveTab) => void;
   onOpenExport: () => void;
+  onOpenGoogleDocsModal?: () => void;
   onOpenGasModal?: () => void;
   onOpenPejabatModal?: () => void;
   onOpenTemplateModal: () => void;
@@ -62,10 +63,11 @@ interface DocumentProjectStage {
   onPreviewPdf: () => void;
 }
 
-export const BentoLauncher: React.FC<BentoLauncherProps> = ({
+export const BentoLauncher: React.FC<BentoLauncherProps> = React.memo(({
   data,
   setActiveTab,
   onOpenExport,
+  onOpenGoogleDocsModal,
   onOpenGasModal,
   onOpenPejabatModal,
   onOpenTemplateModal,
@@ -504,6 +506,40 @@ export const BentoLauncher: React.FC<BentoLauncherProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Google Docs Integration Banner */}
+        {onOpenGoogleDocsModal && (
+          <div className="pt-4">
+            <div
+              onClick={onOpenGoogleDocsModal}
+              className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-2xl p-4 sm:p-5 shadow-lg shadow-blue-500/20 hover:shadow-xl transition cursor-pointer flex items-center justify-between gap-4 group active:scale-[0.99]"
+            >
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white shrink-0 shadow-inner">
+                  <FileText className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-1 bg-white/20 text-blue-100 text-[10px] font-extrabold px-2 py-0.5 rounded-full mb-1 border border-white/20">
+                    <Sparkles className="w-3 h-3 text-amber-300" /> Ekosistem Google Docs Live
+                  </div>
+                  <h3 className="text-sm sm:text-base font-extrabold text-white leading-snug">
+                    Cetak &amp; Live Embed di Google Docs
+                  </h3>
+                  <p className="text-xs text-blue-100/90 font-medium hidden sm:block mt-0.5">
+                    Generate dokumen resmi ke Google Drive Anda, edit langsung, dan cetak via Google Docs.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="px-4 py-2 bg-white text-blue-700 hover:bg-blue-50 font-extrabold text-xs rounded-full shadow-md shrink-0 transition flex items-center gap-1 group-hover:translate-x-0.5"
+              >
+                <span>Buka Docs</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* 5. SECTION: "Aksi Cepat & Layanan" (2 Baris x 3 Item dengan Lingkaran Lebih Besar) */}
         <div className="pt-4">
@@ -1021,4 +1057,4 @@ export const BentoLauncher: React.FC<BentoLauncherProps> = ({
       )}
     </div>
   );
-};
+});

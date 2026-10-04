@@ -225,7 +225,7 @@ const FORMALIZER_SUGGESTIONS = {
   ],
 };
 
-export const FormEditor: React.FC<FormEditorProps> = ({
+export const FormEditor: React.FC<FormEditorProps> = React.memo(({
   data,
   onChange,
   onOpenSignature,
@@ -2457,4 +2457,4 @@ export const FormEditor: React.FC<FormEditorProps> = ({
       )}
     </div>
   );
-};
+});

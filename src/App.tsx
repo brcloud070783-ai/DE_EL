@@ -227,12 +227,7 @@ export default function App() {
   };
 
   const handleTriggerPrint = () => {
-    openPagedJsPdfWindow(data, {
-      paperSize: 'a4',
-      fontSizePt: 10,
-      lineSpacing: 1.15,
-      fontFamily: 'times',
-    });
+    setIsGoogleDocsModalOpen(true);
   };
 
   return (
@@ -248,6 +243,7 @@ export default function App() {
             data={data}
             setActiveTab={setActiveTab}
             onOpenExport={() => setIsExportModalOpen(true)}
+            onOpenGoogleDocsModal={() => setIsGoogleDocsModalOpen(true)}
             onOpenGasModal={() => setIsGasModalOpen(true)}
             onOpenPejabatModal={() => setIsPejabatModalOpen(true)}
             onOpenTemplateModal={() => setIsTemplateModalOpen(true)}
@@ -361,6 +357,7 @@ export default function App() {
                   <A4FitWidthViewer
                     data={data}
                     onPrint={() => setIsExportModalOpen(true)}
+                    onOpenGoogleDocs={() => setIsGoogleDocsModalOpen(true)}
                     onBackToEditor={() => setActiveTab('editor')}
                     onGoToLauncher={() => setActiveTab('launcher')}
                     paperSize={paperSize}
