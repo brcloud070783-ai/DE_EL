@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Printer, Copy, Check, FileDown, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
+import { X, Printer, Copy, Check, FileDown, ShieldCheck, AlertCircle, Loader2, FileText, ExternalLink } from 'lucide-react';
 import {
   TelaahanStafData,
   PaperSizeType,
@@ -16,6 +16,7 @@ interface ExportModalProps {
   onClose: () => void;
   data: TelaahanStafData;
   onPrint: () => void;
+  onOpenGoogleDocs?: () => void;
 }
 
 export const ExportModal: React.FC<ExportModalProps> = ({
@@ -23,6 +24,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   onClose,
   data,
   onPrint,
+  onOpenGoogleDocs,
 }) => {
   const [copied, setCopied] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
@@ -285,6 +287,31 @@ NIP. ${data.kaki.nipPembuat}
               >
                 <FileDown className="w-4 h-4 text-purple-200" />
                 <span>Pratinjau &amp; Unduh</span>
+              </button>
+            </div>
+
+            <div className="p-4 sm:p-5 bg-[#EFF6FF] rounded-2xl border border-blue-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <span className="inline-flex items-center gap-1 text-[11px] font-extrabold text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-full">
+                  <FileText className="w-3 h-3 text-blue-700" /> Ekosistem Google Docs
+                </span>
+                <h4 className="text-sm font-extrabold text-blue-950">
+                  Google Docs Cetak &amp; Embed
+                </h4>
+                <p className="text-xs text-blue-800 leading-normal">
+                  Generate berkas Google Docs resmi, diedit langsung di Drive &amp; dicetak via Google Docs.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  if (onOpenGoogleDocs) onOpenGoogleDocs();
+                }}
+                className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-extrabold rounded-full shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 shrink-0 transition cursor-pointer"
+              >
+                <FileText className="w-4 h-4 text-blue-200" />
+                <span>Buka Google Docs</span>
               </button>
             </div>
 

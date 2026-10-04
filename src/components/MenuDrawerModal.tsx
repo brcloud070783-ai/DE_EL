@@ -32,6 +32,7 @@ interface MenuDrawerModalProps {
   onOpenTemplate: () => void;
   onOpenGas: () => void;
   onOpenExport: () => void;
+  onOpenGoogleDocs?: () => void;
   onOpenSpt?: () => void;
   onOpenSppd?: () => void;
   onOpenKuitansi?: () => void;
@@ -47,6 +48,7 @@ export const MenuDrawerModal: React.FC<MenuDrawerModalProps> = ({
   onOpenTemplate,
   onOpenGas,
   onOpenExport,
+  onOpenGoogleDocs,
   onOpenSpt,
   onOpenSppd,
   onOpenKuitansi,
@@ -305,6 +307,21 @@ export const MenuDrawerModal: React.FC<MenuDrawerModalProps> = ({
               <Globe className="w-4 h-4 text-blue-600" />
               <span>Konek Account Google</span>
             </button>
+
+            {/* Google Docs Cetak & Live Embed */}
+            {onOpenGoogleDocs && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenGoogleDocs();
+                }}
+                className="w-full p-2.5 rounded-xl flex items-center gap-2.5 text-slate-700 hover:bg-blue-50 font-medium transition cursor-pointer"
+              >
+                <FileText className="w-4 h-4 text-blue-600" />
+                <span className="font-semibold text-blue-900">Google Docs Cetak &amp; Embed</span>
+              </button>
+            )}
 
             <div className="my-2 border-t border-slate-100" />
 

@@ -7,6 +7,7 @@ import { DocumentSheet } from './components/DocumentSheet';
 import { SignaturePadModal } from './components/SignaturePadModal';
 import { ExportModal } from './components/ExportModal';
 import { GasIntegrationModal } from './components/GasIntegrationModal';
+import { GoogleDocsEmbedModal } from './components/GoogleDocsEmbedModal';
 import { SptSppdPreviewModal } from './components/SptSppdPreviewModal';
 import { PejabatModal } from './components/PejabatModal';
 import { TemplateSelectorModal } from './components/TemplateSelectorModal';
@@ -89,6 +90,7 @@ export default function App() {
   // 3. Modals State
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isGasModalOpen, setIsGasModalOpen] = useState(false);
+  const [isGoogleDocsModalOpen, setIsGoogleDocsModalOpen] = useState(false);
   const [isMenuDrawerOpen, setIsMenuDrawerOpen] = useState(false);
   const [isPejabatModalOpen, setIsPejabatModalOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
@@ -417,6 +419,7 @@ export default function App() {
         onOpenTemplate={() => setIsTemplateModalOpen(true)}
         onOpenGas={() => setIsGasModalOpen(true)}
         onOpenExport={() => setIsExportModalOpen(true)}
+        onOpenGoogleDocs={() => setIsGoogleDocsModalOpen(true)}
         onOpenSpt={() => setSptSppdModal({ isOpen: true, type: 'spt' })}
         onOpenSppd={() => setSptSppdModal({ isOpen: true, type: 'sppd' })}
         onOpenKuitansi={() => setIsKuitansiModalOpen(true)}
@@ -480,6 +483,13 @@ export default function App() {
         onClose={() => setIsExportModalOpen(false)}
         data={data}
         onPrint={handleTriggerPrint}
+        onOpenGoogleDocs={() => setIsGoogleDocsModalOpen(true)}
+      />
+
+      <GoogleDocsEmbedModal
+        isOpen={isGoogleDocsModalOpen}
+        onClose={() => setIsGoogleDocsModalOpen(false)}
+        data={data}
       />
 
       <GasIntegrationModal

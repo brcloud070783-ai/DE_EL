@@ -226,3 +226,46 @@ export const uploadFileToDrive = async (
 
   return response.json();
 };
+
+/**
+ * Create a native Google Doc from HTML content in Google Drive
+ */
+export const createGoogleDocFromHtml = async (
+  accessToken: string,
+  docTitle: string,
+  htmlContent: string,
+  parentId?: string
+): Promise<GoogleFile> => {
+  const metadata: any = {
+    name: docTitle,
+    mimeType: 'application/vnd.google-apps.document',
+  };
+  if (parentId) {
+    metadata.parents = [parentId];
+  }
+
+  const form = new FormData();
+  form.append(
+    'metadata',
+    new Blob([JSON.stringify(metadata)], { type: 'application/json' })
+  );
+  form.append('file', new Blob([htmlContent], { type: 'text/html' }));
+
+  const response = await fetch(
+    'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: form,
+    }
+  );
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'Gagal membuat Google Doc dari dokumen');
+  }
+
+  return response.json();
+};
