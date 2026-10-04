@@ -1,0 +1,6 @@
+{
+  "name": "E-Telaah Perjadin",
+  "description": "Aplikasi kelengkapan berkas perjalanan dinas pemerintah: Form Telaahan Staf mobile-first dengan output cetak dokumen PDF format naskah dinas resmi sesuai standar.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
